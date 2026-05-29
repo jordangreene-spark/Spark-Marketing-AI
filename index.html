@@ -80,21 +80,42 @@
     font-size: 18px; color: rgba(255,255,255,0.78);
     max-width: 720px; line-height: 1.5;
   }
-  .bet-card {
+  .phase-cards {
     margin-top: 48px;
-    background: var(--blue-50);
-    color: var(--navy);
-    border: 1px solid var(--blue-100);
+    display: grid;
+    grid-template-columns: 1fr 1.08fr 0.94fr;
+    gap: 12px;
+    max-width: 940px;
+  }
+  .phase-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
     border-radius: 8px;
-    padding: 28px 32px;
-    max-width: 880px;
+    padding: 18px 20px;
+    min-width: 0;
   }
-  .bet-card .label {
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
-    color: var(--red); margin-bottom: 12px;
+  .phase-card .phase-chip {
+    font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+    white-space: nowrap;
   }
-  .bet-card p { color: var(--navy); font-size: 15.5px; line-height: 1.6; }
-  .bet-card p + p { margin-top: 14px; }
+  .phase-card .phase-chip .dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    background: var(--white);
+    flex-shrink: 0;
+  }
+  .phase-card:nth-child(2) .phase-chip .dot { background: var(--salmon); }
+  .phase-card:nth-child(3) .phase-chip .dot { background: var(--lavender); }
+  .phase-card h3 {
+    font-family: 'Lora', serif; font-size: 18px; color: var(--white);
+    letter-spacing: -0.025em; margin-bottom: 8px; line-height: 1.15;
+    font-weight: 600;
+  }
+  .phase-card p {
+    font-size: 13px; color: rgba(255,255,255,0.72); line-height: 1.5;
+  }
 
   /* STICKY NAV */
   nav.sticky-nav {
@@ -487,6 +508,86 @@
   }
   footer p { font-size: 10px; color: var(--text-subtle); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
 
+  /* EDIT MODE TOOLBAR */
+  .edit-toolbar {
+    position: fixed; top: 14px; right: 16px; z-index: 100;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .edit-toolbar button {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--navy);
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .edit-toolbar button:hover { background: var(--blue-25); }
+  .edit-toolbar button#editToggle { background: var(--navy); color: var(--white); }
+  .edit-toolbar button#editToggle:hover { background: #0A1340; }
+  body.edit-mode-on .edit-toolbar button#editToggle { background: var(--red); border-color: var(--red); color: var(--white); }
+  body.edit-mode-on .edit-toolbar button#editToggle:hover { background: #B73642; }
+  .edit-toolbar button#editCopy { background: var(--red); color: var(--white); border-color: var(--red); }
+  .edit-toolbar button#editCopy:hover { background: #B73642; }
+  .edit-toolbar button[hidden] { display: none; }
+
+  .editable-on {
+    outline: 1px dashed rgba(212, 65, 79, 0.45);
+    outline-offset: 3px;
+    cursor: text;
+    border-radius: 2px;
+    transition: outline-color 0.15s ease, background 0.15s ease;
+  }
+  .editable-on:hover {
+    outline: 1px dashed rgba(212, 65, 79, 0.95);
+    background: rgba(212, 65, 79, 0.04);
+  }
+  .editable-on:focus {
+    outline: 2px solid var(--red);
+    background: rgba(212, 65, 79, 0.06);
+  }
+  body.edit-mode-on .hero .editable-on {
+    outline-color: rgba(255, 255, 255, 0.5);
+  }
+  body.edit-mode-on .hero .editable-on:hover {
+    outline-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  body.edit-mode-on .hero .editable-on:focus {
+    outline: 2px solid var(--white);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .edit-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+    background: var(--navy); color: var(--white);
+    padding: 12px 22px; border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    border-left: 3px solid var(--red);
+  }
+  .edit-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
+  .edit-help {
+    position: fixed; top: 60px; right: 16px; z-index: 99;
+    background: var(--white); border: 1px solid var(--blue-100);
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    padding: 14px 18px;
+    max-width: 280px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    display: none;
+  }
+  body.edit-mode-on .edit-help { display: block; }
+  .edit-help strong { color: var(--navy); display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+
   /* RESPONSIVE */
   @media (max-width: 900px) {
     .layer-cards, .roadmap, .need-grid, .milestone-callouts,
@@ -509,11 +610,24 @@
       <span>Spark Advisors · Marketing</span>
     </div>
     <h1>From Claude assistant to agent-operated marketing.</h1>
-    <p class="hero-sub">A two-milestone strategy: build the Tier 1 fleet for pre-AEP by July, the full fleet plus Orchestration layer by next recruiting season.</p>
-    <div class="bet-card">
-      <div class="label">The Bet</div>
-      <p>Spark builds an agent-operated marketing function around two business milestones. By July we have a Tier 1 agent fleet running pre-AEP. By February we have the rest of the fleet plus the orchestration layer ready for next recruiting season. Same team. Multiples of the output.</p>
-      <p>AEP 2027 becomes the first cycle we run proactively. Recruiting season 2027 is the first one where sales, content, and brand all run off a shared agent fleet. Marketing scales with revenue, not headcount.</p>
+    <p class="hero-sub">A focused plan based on Medicare seasonality.</p>
+
+    <div class="phase-cards">
+      <div class="phase-card">
+        <div class="phase-chip"><span class="dot"></span>Phase 1 · By July</div>
+        <h3>Pre-AEP &ldquo;Campaign&rdquo;</h3>
+        <p>Agents to engage a high # of partners &amp; prospects with thought leadership, content, tools, and virtual programs that help get them ready for AEP.</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-chip"><span class="dot"></span>Phase 2 · By October</div>
+        <h3>AEP</h3>
+        <p>Agents that systematize market &amp; carrier updates plus key resources to partners. Plus systems that keep prospects warm &amp; engaged ahead of an EOY sprint to build pipeline.</p>
+      </div>
+      <div class="phase-card">
+        <div class="phase-chip"><span class="dot"></span>Phase 3 · By February</div>
+        <h3>Recruiting Season</h3>
+        <p>Agents to jumpstart &amp; scale recruiting and pipeline programs. Multiply content output. Tighten DG ops. Run event operations on autopilot.</p>
+      </div>
     </div>
   </div>
 </header>
@@ -539,9 +653,9 @@
     <span class="section-label">Section 01</span>
     <h2>Why?</h2>
     <div class="case-points">
-      <p><strong>We are great and we are capped.</strong> The team produces more than most marketing orgs twice our size. We are also at the edge of capacity, and we lose momentum at every cross-functional handoff. Sales does not know what we shipped. Product tells us about launches late. DG leads sit waiting for the BDR. Post-event lead processing is manual.</p>
-      <p><strong>We are already actively using Claude.</strong> The Future-Ready Agency Assessment Diana vibe-coded. The ROI Calculator just live on the site. Nick's interactive SNP growth maps. Plus a handful of one-off workflows saving us hours. What we have not done: built the Context and Orchestration layers so agents do meaningful work independently and at scale.</p>
-      <p><strong>Why now: three windows in the marketing year.</strong> Pre-AEP runs July through September. AEP itself runs October through January. Recruiting season starts February. Each window has its own goal. Agents ready by July let us scale pre-AEP engagement. Agents ready by October let us support partners through AEP. Agents ready by February let us scale recruiting and pipeline. Build now and we own all three.</p>
+      <p><strong>We're doing great work, but spread thin and capped on output.</strong> The team produces similar to marketing orgs twice our size. We are also at the edge of capacity, and we lose momentum at every cross-functional handoff. We need less manual, high calorie work and more systems that support us scaling so humans can focus on programs that require high quality.</p>
+      <p><strong>We are already actively using Claude.</strong> We're already highly active with Claude for personal productivity &amp; some offers (Agency Assessment, ROI Calculator, SNP growth maps). What we have not done: build the Context and Orchestration layers so agents do meaningful work independently and at scale.</p>
+      <p><strong>Why now:</strong> We believe pre-AEP is the best time for us to engage the largest number of agents &amp; APs due to their need to get ready for AEP. This is a massive opportunity for Spark, but it requires scale &amp; efficiency, which we can only achieve with AI.</p>
     </div>
     <div class="quick-stats">
       <span class="qs-label">For Context</span>
@@ -559,7 +673,7 @@
   <section id="framework">
     <span class="section-label">Section 02</span>
     <h2>The framework: an agentic marketing org.</h2>
-    <p class="lede">Four layers. Strategy flows down. Execution flows up. Results flow back into the foundation.</p>
+    <p class="lede">Four distinct layers that make it possible for agents to operate.</p>
 
     <div class="framework-visual">
       <svg viewBox="0 0 1280 1280" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
@@ -774,7 +888,7 @@
             <span class="pdot p1">1</span>
             <span class="agent-name">Newsletter agent</span>
           </div>
-          <div class="agent-desc">Drafts the 5 monthly newsletters (Spark agent, AP, IMN EN/ES, prospect) and the weekly AEP newsletter from the topic calendar. Routes SME reviews via Slack approvals.</div>
+          <div class="agent-desc">Drafts monthly newsletters (Spark agent, AP, IMN, prospect) and the weekly AEP newsletter from the topic calendar. Routes SME reviews via Slack approvals.</div>
         </div>
 
         <div class="agent">
@@ -1432,6 +1546,17 @@
 
 </main>
 
+<div class="edit-toolbar">
+  <button id="editToggle" type="button">Edit text</button>
+  <button id="editCopy" type="button" hidden>Copy edits</button>
+  <button id="editReset" type="button" hidden>Reset</button>
+</div>
+<div class="edit-help">
+  <strong>Editing</strong>
+  Click any highlighted text to edit. Navigate tabs as normal. When you're done, click "Copy edits" — your changes copy to clipboard as a list you can paste back to Claude.
+</div>
+<div class="edit-toast" id="editToast"></div>
+
 <footer>
   <p>Spark Advisors · May 2026</p>
 </footer>
@@ -1467,6 +1592,179 @@
   const initialSection = document.getElementById(initial) ? initial : 'why';
   sections.forEach(s => s.classList.toggle('active', s.id === initialSection));
   navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + initialSection));
+
+  /* ===== Edit mode ===== */
+  const editableSelectors = [
+    '.hero h1', '.hero-sub',
+    '.phase-card h3', '.phase-card p',
+    'section h2', '.lede',
+    '.prose p', '.case-points p',
+    '.layer-card h4', '.layer-card p',
+    '.agent-name', '.agent-desc',
+    '.cluster-name',
+    '.migration-week .wt', '.migration-week .wd',
+    '.skills-callout h3', '.skills-callout p',
+    '.pillar h4', '.pillar p',
+    '.auto-card .auto-label',
+    '.expectation-callout h4', '.expectation-callout p',
+    '.mc h3', '.mc p',
+    '.roadmap-block h4', '.roadmap-block p',
+    '.cobuild-hero h3', '.cobuild-hero p',
+    '.week-card h5', '.week-card p',
+    '.need-card h4', '.need-card p',
+    '.net-callout p',
+    '.closer h3', '.closer p',
+    '.qs-label'
+  ];
+
+  let editMode = false;
+  const inlineSafeTags = new Set(['STRONG', 'EM', 'B', 'I', 'BR', 'A', 'TSPAN']);
+
+  function getEditableElements() {
+    const result = new Set();
+    editableSelectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        // Skip elements that contain block-level children (e.g., phase-chip with .dot span)
+        const hasBlockChild = [...el.children].some(c => !inlineSafeTags.has(c.tagName));
+        if (hasBlockChild) return;
+        if (!el.textContent.trim()) return;
+        result.add(el);
+      });
+    });
+    return [...result];
+  }
+
+  function snapshotOriginal(el) {
+    if (!el.dataset.original) el.dataset.original = el.innerHTML;
+  }
+
+  function enterEditMode() {
+    editMode = true;
+    document.body.classList.add('edit-mode-on');
+    getEditableElements().forEach(el => {
+      snapshotOriginal(el);
+      el.setAttribute('contenteditable', 'true');
+      el.classList.add('editable-on');
+    });
+    document.getElementById('editToggle').textContent = 'Exit edit';
+    document.getElementById('editCopy').hidden = false;
+    document.getElementById('editReset').hidden = false;
+    showToast('Edit mode on. Click text to edit.');
+  }
+
+  function exitEditMode() {
+    editMode = false;
+    document.body.classList.remove('edit-mode-on');
+    getEditableElements().forEach(el => {
+      el.removeAttribute('contenteditable');
+      el.classList.remove('editable-on');
+    });
+    document.getElementById('editToggle').textContent = 'Edit text';
+    document.getElementById('editCopy').hidden = true;
+    document.getElementById('editReset').hidden = true;
+  }
+
+  function getSectionContext(el) {
+    const section = el.closest('section');
+    if (section) {
+      const h2 = section.querySelector('h2');
+      if (h2) return h2.textContent.replace(/[.!?]$/, '').trim();
+    }
+    if (el.closest('.hero')) return 'Hero';
+    return 'Document';
+  }
+
+  function shortLabel(el) {
+    const tag = el.tagName.toLowerCase();
+    const cls = el.className.toString().split(/\s+/).find(c => c && !c.startsWith('editable')) || '';
+    if (cls) return tag + '.' + cls;
+    return tag;
+  }
+
+  function plainText(html) {
+    const t = document.createElement('div');
+    t.innerHTML = html;
+    return t.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function copyEdits() {
+    const els = getEditableElements();
+    const edits = [];
+    els.forEach(el => {
+      const originalHtml = el.dataset.original || '';
+      const currentHtml = el.innerHTML;
+      const originalText = plainText(originalHtml);
+      const currentText = plainText(currentHtml);
+      if (originalText !== currentText) {
+        edits.push({
+          section: getSectionContext(el),
+          label: shortLabel(el),
+          original: originalText,
+          updated: currentText
+        });
+      }
+    });
+
+    if (edits.length === 0) {
+      showToast('No edits detected yet.');
+      return;
+    }
+
+    // Group by section and format as markdown
+    let output = '## Text edits to apply\n';
+    let currentSection = null;
+    edits.forEach(e => {
+      if (e.section !== currentSection) {
+        output += '\n### ' + e.section + '\n';
+        currentSection = e.section;
+      }
+      const orig = e.original.length > 120 ? e.original.slice(0, 120) + '…' : e.original;
+      output += '\n- **[' + e.label + ']**\n';
+      output += '  - Old: "' + orig + '"\n';
+      output += '  - New: "' + e.updated + '"\n';
+    });
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(output).then(() => {
+        showToast('Copied ' + edits.length + ' edit' + (edits.length === 1 ? '' : 's') + ' to clipboard.');
+      }).catch(() => fallbackShow(output));
+    } else {
+      fallbackShow(output);
+    }
+  }
+
+  function fallbackShow(output) {
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write('<pre style="font-family:ui-monospace,Menlo,monospace;padding:20px;white-space:pre-wrap;">' + output.replace(/</g, '&lt;') + '</pre>');
+      w.document.title = 'Edits to apply';
+    } else {
+      prompt('Copy the edits below:', output);
+    }
+  }
+
+  function resetEdits() {
+    if (!confirm('Reset all edits to the original text?')) return;
+    getEditableElements().forEach(el => {
+      if (el.dataset.original) el.innerHTML = el.dataset.original;
+    });
+    showToast('Edits reset.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('editToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  document.getElementById('editToggle').addEventListener('click', () => {
+    if (editMode) exitEditMode(); else enterEditMode();
+  });
+  document.getElementById('editCopy').addEventListener('click', copyEdits);
+  document.getElementById('editReset').addEventListener('click', resetEdits);
 </script>
 
 </body>
